@@ -8,6 +8,9 @@ from Entities.Fly import Fly
 
 class Experiment(BaseModel):
 
+    start = DateTimeField(null=True)
+    end = DateTimeField(null=True)
+    
     temperature = FloatField(null=True)
     air = TextField(null=True)
     glue = TextField(null=True)
@@ -22,4 +25,6 @@ class Experiment(BaseModel):
     starvation_start = DateTimeField(null=True)
     tether_start = DateTimeField(null=True)
     tether_end = DateTimeField(null=True)
+
+    protocol = TextField(null=True)
 

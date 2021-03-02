@@ -61,8 +61,7 @@ class FlyTransformer(Transformer):
 
 
     def _nothingtosee(self,  tsLog, tsClient, tsReq, key, value):
-        print("Nothing to see")
-        pass
+        print(f"Unknown key {key}")
 
     def get_keys(self):
         return self.switcher.keys()

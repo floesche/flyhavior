@@ -11,10 +11,12 @@ from Entities.BaseModel import db
 from Entities.Experiment import Experiment
 from Entities.Ball import Ball
 from Entities.Fly import Fly
+from Entities.Condition import Condition
 
 class Flyhavior:
 
     def __init__(self, fnFlyFlix, fnFicTrac, fnDB) -> None:
+        db.create_tables([Experiment, Ball, Fly, Condition])
         self.fnFlyFlix = fnFlyFlix
         self.fnFicTrac = fnFicTrac
         self.fnDB = fnDB
@@ -24,8 +26,6 @@ class Flyhavior:
     def run(self) -> None:
 
         # Database.createTables()
-        db.create_tables([Experiment, Ball, Fly])
-
         with open(self.fnFlyFlix) as fffile:
             ffreader = csv.DictReader(fffile, fieldnames = ["ts", "tsClient", "tsReq", "key", "value"])
             for row in ffreader:
