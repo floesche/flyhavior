@@ -16,8 +16,8 @@ class Experiment(BaseModel):
     display_brightness = FloatField(null=True)
     display_color = TextField(null=True)
 
-    ball = ForeignKeyField(Ball, null=True, backref='ball')
-    fly = ForeignKeyField(Fly, null=True, backref='fly')
+    ball = ForeignKeyField(Ball, null=True, backref='ball', on_update="CASCADE", on_delete="CASCADE")
+    fly = ForeignKeyField(Fly, null=True, backref='fly', on_update="CASCADE", on_delete="CASCADE")
 
     starvation_start = DateTimeField(null=True)
     tether_start = DateTimeField(null=True)

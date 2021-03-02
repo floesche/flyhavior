@@ -1,10 +1,13 @@
+import warnings
+
 from peewee import *
 
 from Entities.BaseModel import BaseModel
 
 class Fly(BaseModel):
 
-    number = IntegerField(primary_key=True)
+    # number = IntegerField(primary_key=True)
+    number = IntegerField(unique=True)
     sex = TextField(null=True, constraints=[Check('sex IN ("F", "M")')])
     birth_after = DateTimeField(null=True)
     birth_before = DateTimeField(null=True)
@@ -17,11 +20,10 @@ class Fly(BaseModel):
     
 
     def values_from(self, fly) -> None:
-        if fly.number is not None and self.number is None:
-            self.number = fly.number
-        else:
-            warnings.warn(f"Conflict for fly number: source {fly.number} and target {self.number}")
-        
+        # if fly.number is not None and self.number is None:
+        #     self.number = fly.number
+        # else:
+        #     warnings.warn(f"Conflict for fly number: source {fly.number} and target {self.number}")
         if fly.sex is not None and self.sex is None:
             self.sex = fly.sex
         else:

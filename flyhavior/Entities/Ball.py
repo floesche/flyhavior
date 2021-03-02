@@ -4,5 +4,5 @@ from Entities.BaseModel import BaseModel
 
 class Ball(BaseModel):
 
-    number = IntegerField(primary_key=True)
+    number = IntegerField(unique=True)
     weight = FloatField(null=True)

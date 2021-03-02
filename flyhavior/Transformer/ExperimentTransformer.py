@@ -12,6 +12,8 @@ class ExperimentTransformer(Transformer):
     def __init__(self, experiment) -> None:
         self.transformer = list()
         self.experiment = experiment
+        self.experiment.fly = Fly()
+        #self.flytransformer = FlyTransformer(self.experiment.fly)
         self.flytransformer = FlyTransformer(self.experiment.fly)
 
     def addTransformer(self, transformer) -> None:
@@ -38,34 +40,9 @@ class ExperimentTransformer(Transformer):
                 self.experiment.ball = query.get()
             else:
                 self.experiment.ball = Ball.create(number = int(value))
-
         elif key in self.flytransformer.get_keys():
             self.flytransformer.transform(tsLog, tsClient, tsReq, key, value)
-        ## Fly related things
-        # elif key == "fly":
-        #     ft = FlyTransformer(Fly())
-        #     ft.transform( tsLog, tsClient, tsReq, key, value)
-        #     query = Fly.select().where(Fly.number == int(value))
-        #     if query.exists():
-        #         warnings.warn(f"Fly number {value} already exists")
-        #         fly = query.get()
-        #         if self.experiment.fly is None:
-        #             self.experiment.fly = fly
-        #         elif isinstance(self.experiment.fly, Fly):
-        #             self.experiment.fly.copy_from(fly)
-        #     else:
-        #         self.experiment.fly = Fly.create(number = int(value))
-            
 
-
-# elf.sex = fly.sex
-#         self.birth_after = fly.birth_after
-#         self.birth_before = fly.birth_before
-#         self.strain = fly.strain
-#         self.batch = fly.batch
-#         self.day_start = fly.day_start
-#         self.day_end = fly.day_end
-#         self.incubator_since
 
 
 
@@ -75,7 +52,6 @@ class ExperimentTransformer(Transformer):
         
     
     def save(self) -> None:
-        # self.experiment.fly.save()
-        # self.experiment.ball.save()
         self.experiment.fly = self.flytransformer.fly
+        self.experiment.fly.save()
         self.experiment.save()
