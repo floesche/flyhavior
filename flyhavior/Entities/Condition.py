@@ -20,3 +20,6 @@ class Condition(BaseModel):
 
     comment = TextField(null=True)
     repetition = IntegerField(null=True)
+
+    gain = FloatField(null=True)
+    stimulus_type = TextField(null=True)

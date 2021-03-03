@@ -1,3 +1,5 @@
+import re
+
 from Transformer.Transformer import Transformer
 
 from Entities.Condition import Condition
@@ -67,7 +69,17 @@ class ConditionTransformer(Transformer):
         self.block_repetition = int(value)
         
     def _comment(self, tsLog, tsClient, tsReq, key, value) -> None:
-        self.comment = value
+        self.comment = value.strip()
+        gain_match = re.findall("gain\s+(\d+.*$)", self.comment)
+        if gain_match:
+            self.gain = gain_match[0]
+        else:
+            self.gain = None
+        first_word = re.findall("(?:^|(?:[.!?]\s))(\w+)", self.comment)
+        if first_word:
+            self.stimulus_type = first_word[0].lower()
+        else:
+            self.stimulus_type = None
 
     def _condition_type(self, tsLog, tsClient, tsReq, key, value) -> None:
         if value == "open-loop":
@@ -86,19 +98,22 @@ class ConditionTransformer(Transformer):
     def _condition_start(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.condition_number = round((float(value)-self.trial_number) * 10)
         self.condition_type = "PRE"
-        self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, comment=self.comment, repetition=self.block_repetition)
+        stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
+        self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type)
 
     def _speed(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.speed = float(value)
         if self.condition_type == "PRE" and value != "0":
-            # End Pre
             self.condition.save()
             self.condition_type = self.trial_type
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition)
+            gain = self.gain if self.condition_type == "CLOSED" else None
+            stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type)
         elif self.condition_type in ["CLOSED", "OPEN"] and int(tsReq) > 1000000000000000000 and value == "0":
             self.condition.save()
             self.condition_type="POST"
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition)
+            stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type)
         elif self.condition_type == "CLOSED" and int(tsReq) < 1000000000000000000:   # Start rotation FIXME: Should be in RopptationTranformer
             if isinstance(self.rotation, Rotation):
                 self.rotation.save()

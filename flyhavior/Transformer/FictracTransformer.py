@@ -105,8 +105,8 @@ class FictracTransformer():
         # Clean out fictrac
         sql = '''DELETE from 
                  fictrac where experiment_id=? and (
-                 frame_counter<(select min(r.fictrac_id) from Rotation r INNER JOIN Condition c on r.condition_id=c.ID where c.experiment_id=?) or 
-                 frame_counter>(select max(r.fictrac_id) from Rotation r INNER JOIN Condition c on r.condition_id=c.ID where c.experiment_id=?))'''
+                 id<(select min(r.fictrac_id) from Rotation r INNER JOIN Condition c on r.condition_id=c.ID where c.experiment_id=?) or 
+                 id>(select max(r.fictrac_id) from Rotation r INNER JOIN Condition c on r.condition_id=c.ID where c.experiment_id=?))'''
         db.execute_sql(sql, (self.experiment.id,self.experiment.id,self.experiment.id,))
         db.commit()
 
