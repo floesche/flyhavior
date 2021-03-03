@@ -1,4 +1,5 @@
 .autoenv*
+.load-data.mk
 data/*
 
 # Byte-compiled / optimized / DLL files

@@ -19,6 +19,7 @@ class ExperimentTransformer(Transformer):
         self.experiment = experiment
         self.experiment.save()
         self.experiment.fly = Fly()
+        self._client_base_time = []
         #self.flytransformer = FlyTransformer(self.experiment.fly)
         self.flytransformer = FlyTransformer(self.experiment.fly)
         self.conditiontransformer = ConditionTransformer(self.experiment)
@@ -37,6 +38,7 @@ class ExperimentTransformer(Transformer):
             "tether-end": self._tether_stop,
             "protocol": self._protocol,
             "ball": self._ball,
+            "block-repetition": self._time_sync
         }
 
 
@@ -46,15 +48,16 @@ class ExperimentTransformer(Transformer):
 
     def transform(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.switcher.get(key, self._other_transforms)(tsLog, tsClient, tsReq, key, value)
+        if key in self.flytransformer.get_keys():
+            self.flytransformer.transform(tsLog, tsClient, tsReq, key, value)
+        if key in self.conditiontransformer.get_keys():
+            self.conditiontransformer.transform(tsLog, tsClient, tsReq, key, value)
+        else:
+            # print(f"Unknown key {key}")
+            pass
 
 
     def _other_transforms(self,  tsLog, tsClient, tsReq, key, value):
-        if key in self.flytransformer.get_keys():
-            self.flytransformer.transform(tsLog, tsClient, tsReq, key, value)
-        elif key in self.conditiontransformer.get_keys():
-            self.conditiontransformer.transform(tsLog, tsClient, tsReq, key, value)
-        else:
-            print(f"Unknown key {key}")
         self.experiment.end = datetime.fromtimestamp(float(tsLog) / 1000000000, timezone(timedelta(hours=-5)))
 
     def _start_time(self, tsLog, tsClient, tsReq, key, value) -> None:
@@ -95,9 +98,11 @@ class ExperimentTransformer(Transformer):
 
     def _ball(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.experiment.ball, created = Ball.get_or_create(number=int(value))
-
-
     
+    def _time_sync(self, tsLog, tsClient, tsReq, key, value) -> None:
+        self._client_base_time.append(int(tsReq) - float(tsClient) * 1000000)
+        self.experiment._client_start = datetime.fromtimestamp((sum(self._client_base_time)/len(self._client_base_time))/ 1000000000, timezone(timedelta(hours=-5)))
+
 
     def get_keys(self):
         return self.switcher.keys()

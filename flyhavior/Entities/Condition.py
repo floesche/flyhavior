@@ -17,3 +17,6 @@ class Condition(BaseModel):
     fps = FloatField(null=True)
     bar_size = FloatField(null=True)
     interval_size = FloatField(null=True)
+
+    comment = TextField(null=True)
+    repetition = IntegerField(null=True)

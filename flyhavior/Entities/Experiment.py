@@ -28,3 +28,5 @@ class Experiment(BaseModel):
 
     protocol = TextField(null=True)
 
+    _client_start = DateTimeField(null=True)
+
