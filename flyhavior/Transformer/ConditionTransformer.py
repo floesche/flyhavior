@@ -26,6 +26,8 @@ class ConditionTransformer(Transformer):
         self.panel_angle = None
         self.interval_angle = None
 
+        self.start_orientation = None
+
         self.switcher = {
             "block-repetition": self._block_repetition,
             "comment": self._comment,
@@ -47,16 +49,15 @@ class ConditionTransformer(Transformer):
             "panels-interval-angle": self._interval_angle,
 
             "de-speed": self._speed,
+            "de-rotate-to": self._rotate_to,
+
+            "closedloop-gain": self._gain,
 
             # "camera-set-lid-old": self._start_closed_rotation
-
 
             "camera-tick-rotation": self._set_rotate,
             "loop-render": self._set_rendered,
             "loop-tick-delta": self._start_rotation,
-            
-
-            
         }
 
     def transform(self, tsLog, tsClient, tsReq, key, value) -> None:
@@ -68,13 +69,19 @@ class ConditionTransformer(Transformer):
     def _block_repetition(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.block_repetition = int(value)
         
+    def _gain(self, tsLog, tsClient, tsReq, key, value) -> None:
+        self.gain = float(value)
+
+    def _rotate_to(self, tsLog, tsClient, tsReq, key, value) -> None:
+        self.start_orientation = float(value)
+
     def _comment(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.comment = value.strip()
-        gain_match = re.findall("gain\s+(\d+.*$)", self.comment)
-        if gain_match:
-            self.gain = gain_match[0]
-        else:
-            self.gain = None
+        # gain_match = re.findall("gain\s+([-]?\d+.*$)", self.comment)
+        # if gain_match:
+        #     self.gain = gain_match[0]
+        # else:
+        #     self.gain = None
         first_word = re.findall("(?:^|(?:[.!?]\s))(\w+)", self.comment)
         if first_word:
             self.stimulus_type = first_word[0].lower()
@@ -103,18 +110,21 @@ class ConditionTransformer(Transformer):
 
     def _speed(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.speed = float(value)
+        ## FIXME: This whole thing doesn't really work.
         if self.condition_type == "PRE" and value != "0":
+        #if self.condition_type == "PRE" and int(tsReq) < 1000000000000000000: # Maybe this works for closed loop protocol 12?
+        #if self.condition_type == "PRE":
             self.condition.save()
             self.condition_type = self.trial_type
             gain = self.gain if self.condition_type == "CLOSED" else None
             stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type)
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation)
         elif self.condition_type in ["CLOSED", "OPEN"] and int(tsReq) > 1000000000000000000 and value == "0":
             self.condition.save()
             self.condition_type="POST"
             stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
             self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type)
-        elif self.condition_type == "CLOSED" and int(tsReq) < 1000000000000000000:   # Start rotation FIXME: Should be in RopptationTranformer
+        elif self.condition_type == "CLOSED" and int(tsReq) < 1000000000000000000:   # Start rotation FIXME: Should be in RotationTranformer
             if isinstance(self.rotation, Rotation):
                 self.rotation.save()
                 self.rotation = None

@@ -28,6 +28,7 @@ class FictracTransformer():
             "delta_timestamp",\
             "alternative_timestamp"])
     
+        df.sort_values('timestamp', inplace=True)
         # sql = '''SELECT MIN(r.fictrac_id) AS minf, MAX(r.fictrac_id) AS maxf 
         #          FROM Condition c 
         #          INNER JOIN rotation r on c.id = r.conditionID 
@@ -92,6 +93,7 @@ class FictracTransformer():
         df2 = pd.read_sql_query(sql, db)
     
         df2['ftts'] = df2['client_ts_ms'] + tdiff
+
         mergedf = pd.merge_asof(df2, df, left_on="ftts", right_on="timestamp", direction="nearest")
         updater = mergedf[mergedf["fictrac_id"].isna()][["id", "seq"]]
     
@@ -109,8 +111,6 @@ class FictracTransformer():
                  id>(select max(r.fictrac_id) from Rotation r INNER JOIN Condition c on r.condition_id=c.ID where c.experiment_id=?))'''
         db.execute_sql(sql, (self.experiment.id,self.experiment.id,self.experiment.id,))
         db.commit()
-
-
 
         sql = '''
             CREATE VIEW IF NOT EXISTS

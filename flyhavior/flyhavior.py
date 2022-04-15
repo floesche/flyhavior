@@ -33,6 +33,7 @@ class Flyhavior:
         with open(self.fnFlyFlix) as fffile:
             ffreader = csv.DictReader(fffile, fieldnames=["ts", "tsClient", "tsReq", "key", "value"])
             for row in ffreader:
+                #if row["tsClient"] != "clientTS" and int(row["tsClient"]) < 5990098: ### Hack for data on 2022
                 self.transformer.transform(row["ts"], row["tsClient"], row["tsReq"], row["key"], row["value"])
 
         self.transformer.save()
