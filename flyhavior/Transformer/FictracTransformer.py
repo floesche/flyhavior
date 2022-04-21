@@ -28,7 +28,7 @@ class FictracTransformer():
             "delta_timestamp",\
             "alternative_timestamp"])
     
-        df.sort_values('timestamp', inplace=True)
+        df.sort_values('frame_counter', inplace=True)
         # sql = '''SELECT MIN(r.fictrac_id) AS minf, MAX(r.fictrac_id) AS maxf 
         #          FROM Condition c 
         #          INNER JOIN rotation r on c.id = r.conditionID 
@@ -73,37 +73,29 @@ class FictracTransformer():
     
         db.execute_sql("DROP TABLE fictrac_tmp")
         db.commit()
-    
-        sql = '''
-            SELECT AVG(f.timestamp-r.client_ts_ms)
-            FROM Rotation r 
-            INNER JOIN fictrac f ON r.fictrac_seq = f.seq 
-            INNER JOIN Condition c ON r.condition_id = c.id AND c.experiment_id = f.experiment_id AND f.experiment_id=?'''
-        cur = db.execute_sql(sql, (self.experiment.id,))
-        rows = cur.fetchall()
-        assert len(rows) == 1
-        tdiff = rows[0][0]
-    
-        sql = f'''
-            SELECT r.id, client_ts_ms, fictrac_id 
-            FROM Rotation r 
-            INNER JOIN Condition c on r.condition_id=c.id 
-            WHERE c.experiment_id={self.experiment.id}'''
-    
-        df2 = pd.read_sql_query(sql, db)
-    
-        df2['ftts'] = df2['client_ts_ms'] + tdiff
 
-        mergedf = pd.merge_asof(df2, df, left_on="ftts", right_on="timestamp", direction="nearest")
-        updater = mergedf[mergedf["fictrac_id"].isna()][["id", "seq"]]
-    
-        for idx, rw in updater.iterrows():
-            sql = f'''UPDATE Rotation SET fictrac_id=(SELECT id from fictrac where seq={rw['seq']} and experiment_id={self.experiment.id}) WHERE id={rw['id']}'''
-            try:
+        sql = '''
+            SELECT MIN(id), MAX(id), fictrac_seq, COUNT(*)
+            FROM Rotation
+            GROUP BY fictrac_seq
+        '''
+        cur = db.execute_sql(sql)
+        rows = cur.fetchall()
+
+        
+        for rw in rows:
+            for i in range(rw[0], rw[1]+1):
+                sql = f'''
+                UPDATE Rotation
+                SET fictrac_id = (SELECT id 
+                    FROM fictrac
+                    WHERE frame_counter = {rw[2]} + ROUND({101/rw[3]} * ({i} - {rw[0]}))
+                    AND experiment_id={self.experiment.id})
+                WHERE id = {i}
+                AND condition_id in (SELECT id from condition where experiment_id={self.experiment.id})
+                '''
                 db.execute_sql(sql)
-            except:
-                print(sql)
-        db.commit()
+
         # Clean out fictrac
         sql = '''DELETE from 
                  fictrac where experiment_id=? and (
@@ -119,7 +111,7 @@ class FictracTransformer():
               f.number, f.sex, f.strain, f.birth_after, f.birth_before, f.day_start, f.day_end, 
               b.number as ball_number,
               e.temperature, e.air, e.glue, 
-              c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size,
+              c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size, c.fg_color, c.bg_color,
               r.rendered, r.speed, r.angle,
               t.*
             FROM fly f 

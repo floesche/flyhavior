@@ -20,11 +20,16 @@ class ConditionTransformer(Transformer):
         self.condition_type = None
         self.condition = None
 
+        self.fictrac_frame = None
+
         self.rotation = None
         self.speed = None
         self.fps = None
         self.panel_angle = None
         self.interval_angle = None
+
+        self.fg_color = None
+        self.bg_color = None
 
         self.start_orientation = None
 
@@ -48,14 +53,19 @@ class ConditionTransformer(Transformer):
             "panels-panel-angle": self._panel_angle,
             "panels-interval-angle": self._interval_angle,
 
-            "de-speed": self._speed,
+            "de-panel-speed": self._speed,
             "de-rotate-to": self._rotate_to,
 
+            "de-spatial-setup-fgcolor": self._fg_color,
+            "de-spatial-setup-bgcolor": self._bg_color,
+
             "closedloop-gain": self._gain,
+            "fictrac-frame": self._fictrac_frame,
 
             # "camera-set-lid-old": self._start_closed_rotation
 
-            "camera-tick-rotation": self._set_rotate,
+            #"camera-tick-rotation": self._set_rotate, ## Old
+            "panels-tick-rotation": self._set_rotate,
             "loop-render": self._set_rendered,
             "loop-tick-delta": self._start_rotation,
         }
@@ -88,6 +98,9 @@ class ConditionTransformer(Transformer):
         else:
             self.stimulus_type = None
 
+    def _fictrac_frame(self, tsLog, tsClient, tsReq, key, value) -> None:
+        self.fictrac_frame = int(value)
+
     def _condition_type(self, tsLog, tsClient, tsReq, key, value) -> None:
         if value == "open-loop":
             self.trial_type = "OPEN"
@@ -106,7 +119,7 @@ class ConditionTransformer(Transformer):
         self.condition_number = round((float(value)-self.trial_number) * 10)
         self.condition_type = "PRE"
         stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
-        self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type)
+        self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color)
 
     def _speed(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.speed = float(value)
@@ -118,12 +131,12 @@ class ConditionTransformer(Transformer):
             self.condition_type = self.trial_type
             gain = self.gain if self.condition_type == "CLOSED" else None
             stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation)
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation, fg_color=self.fg_color, bg_color=self.bg_color)
         elif self.condition_type in ["CLOSED", "OPEN"] and int(tsReq) > 1000000000000000000 and value == "0":
             self.condition.save()
             self.condition_type="POST"
             stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type)
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color)
         elif self.condition_type == "CLOSED" and int(tsReq) < 1000000000000000000:   # Start rotation FIXME: Should be in RotationTranformer
             if isinstance(self.rotation, Rotation):
                 self.rotation.save()
@@ -144,8 +157,7 @@ class ConditionTransformer(Transformer):
             if isinstance(self.rotation, Rotation):
                 self.rotation.save()
                 self.rotation = None
-            self.rotation = Rotation.create(condition=self.condition, client_ts_ms=int(tsClient), speed=self.speed)
-            
+            self.rotation = Rotation.create(condition=self.condition, client_ts_ms=int(tsClient), speed=self.speed, fictrac_seq=self.fictrac_frame)
 
     def _condition_end(self, tsLog, tsClient, tsReq, key, value) -> None:
         assert self.condition_number == round((float(value)-self.trial_number) * 10), f"Error in condition {value}: should be {self.condition_number}"
@@ -172,6 +184,16 @@ class ConditionTransformer(Transformer):
         if isinstance(self.condition, Condition):
             self.condition.interval_size = self.interval_angle
 
+
+    def _bg_color(self, tsLog, tsClient, tsReq, key, value) -> None:
+        self.bg_color = int(value)
+        if isinstance(self.condition, Condition):
+            self.condition.bg_color = self.bg_color
+    
+    def _fg_color(self, tsLog, tsClient, tsReq, key, value) -> None:
+        self.fg_color = int(value)
+        if isinstance(self.condition, Condition):
+            self.condition.fg_color = self.fg_color
 
     def get_keys(self):
         return self.switcher.keys()

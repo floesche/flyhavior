@@ -25,6 +25,7 @@ def main():
         post.fix_data()
         post.create_a_condition()
         post.alter_v_move()
+        post.vacuum()
     return 0
 
 
