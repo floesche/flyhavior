@@ -82,7 +82,6 @@ class FictracTransformer():
         cur = db.execute_sql(sql)
         rows = cur.fetchall()
 
-        
         for rw in rows:
             for i in range(rw[0], rw[1]+1):
                 sql = f'''

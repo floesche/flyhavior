@@ -55,6 +55,7 @@ class ConditionTransformer(Transformer):
 
             "de-panel-speed": self._speed,
             "de-rotate-to": self._rotate_to,
+            "de-panels-oscillation": self._oscillation,
 
             "de-spatial-setup-fgcolor": self._fg_color,
             "de-spatial-setup-bgcolor": self._bg_color,
@@ -69,6 +70,7 @@ class ConditionTransformer(Transformer):
             "loop-render": self._set_rendered,
             "loop-tick-delta": self._start_rotation,
         }
+        self.counter = 0
 
     def transform(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.switcher.get(key, self._other_transforms)(tsLog, tsClient, tsReq, key, value)
@@ -143,6 +145,25 @@ class ConditionTransformer(Transformer):
                 self.rotation = None
             if isinstance(self.condition, Condition):
                 self.rotation = Rotation.create(condition=self.condition, client_ts_ms=int(tsClient), fictrac_seq=int(tsReq), speed=self.speed)
+    
+    def _oscillation(self, tsLog, tsClient, tsReq, key, value) -> None:
+        if self.stimulus_type != "oscillation":
+            return
+        if self.condition_type == "PRE":
+            if self.counter == 0:
+                self.counter += 1
+                return
+            self.counter = 0
+            self.condition.save()
+            self.condition_type = "OPEN"
+            gain = None
+            stimulus_type = self.stimulus_type
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation, fg_color=self.fg_color, bg_color=self.bg_color)
+        elif self.condition_type in ["OPEN"]:
+            self.condition.save()
+            self.condition_type="POST"
+            stimulus_type = self.stimulus_type
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color)
 
     def _set_rotate(self, tsLog, tsClient, tsReq, key, value) -> None: # FIXME: should be in ROtaitonTransformer
         if isinstance(self.rotation, Rotation):
