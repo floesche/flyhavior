@@ -24,15 +24,16 @@ class PostProcessor:
         self.db.commit()
 
         self.db.execute("""
-        CREATE VIEW IF NOT EXISTS
-        v_move AS
+            CREATE VIEW IF NOT EXISTS
+            v_move AS 
             SELECT 
                 f.number AS fly_number, f.sex, f.strain, f.birth_after, f.birth_before, f.day_start, f.day_end, 
                 b.number as ball_number,
-                e.temperature, e.air, e.glue, 
+                e.temperature, e.air, e.glue, e.start,
                 c.repetition, c.stimulus_type, c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size, c.gain, c.start_orientation, c.comment, c.fg_color, c.bg_color,
+                c.contrast, c.brightness,
                 ac.bar_deg, ac.interval_deg, ac.trial_speed, ac.trial_speed_deg, ac.direction,
-                r.rendered, r.speed, r.angle,
+                r.rendered, r.speed, r.angle, r.client_ts_ms,
                 -- at.turn,
                 t.*
             FROM fly f 

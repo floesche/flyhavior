@@ -105,20 +105,23 @@ class FictracTransformer():
 
         sql = '''
             CREATE VIEW IF NOT EXISTS
-            v_move AS
+            v_move AS 
             SELECT 
-              f.number, f.sex, f.strain, f.birth_after, f.birth_before, f.day_start, f.day_end, 
-              b.number as ball_number,
-              e.temperature, e.air, e.glue, 
-              c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size, c.fg_color, c.bg_color,
-              r.rendered, r.speed, r.angle,
-              t.*
+                f.number AS fly_number, f.sex, f.strain, f.birth_after, f.birth_before, f.day_start, f.day_end, 
+                b.number as ball_number,
+                e.temperature, e.air, e.glue, e.start,
+                c.repetition, c.stimulus_type, c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size, c.gain, c.start_orientation, c.comment, c.fg_color, c.bg_color,
+                c.contrast, c.brightness,
+                r.rendered, r.speed, r.angle, r.client_ts_ms,
+                -- at.turn,
+                t.*
             FROM fly f 
             LEFT JOIN experiment e on f.id = e.fly_id 
             LEFT JOIN ball b on e.ball_id=b.id
             LEFT JOIN condition c on c.experiment_id = e.id
             LEFT JOIN rotation r on r.condition_id = c.id
             LEFT JOIN fictrac t ON r.fictrac_id = t.id
+            -- LEFT JOIN a_fictrac at on at.fictrac_id=t.id
         '''
         db.execute_sql(sql)
         db.commit()

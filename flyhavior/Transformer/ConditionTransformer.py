@@ -31,6 +31,9 @@ class ConditionTransformer(Transformer):
         self.fg_color = None
         self.bg_color = None
 
+        self.brightness = None
+        self.contrast = None
+
         self.start_orientation = None
 
         self.switcher = {
@@ -121,7 +124,7 @@ class ConditionTransformer(Transformer):
         self.condition_number = round((float(value)-self.trial_number) * 10)
         self.condition_type = "PRE"
         stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
-        self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color)
+        self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color, brightness = self.brightness, contrast = self.contrast)
 
     def _speed(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.speed = float(value)
@@ -133,12 +136,12 @@ class ConditionTransformer(Transformer):
             self.condition_type = self.trial_type
             gain = self.gain if self.condition_type == "CLOSED" else None
             stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation, fg_color=self.fg_color, bg_color=self.bg_color)
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation, fg_color=self.fg_color, bg_color=self.bg_color, brightness = self.brightness, contrast = self.contrast)
         elif self.condition_type in ["CLOSED", "OPEN"] and int(tsReq) > 1000000000000000000 and value == "0":
             self.condition.save()
             self.condition_type="POST"
             stimulus_type = self.stimulus_type if self.trial_type == "OPEN" else None
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color)
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color, brightness = self.brightness, contrast = self.contrast)
         elif self.condition_type == "CLOSED" and int(tsReq) < 1000000000000000000:   # Start rotation FIXME: Should be in RotationTranformer
             if isinstance(self.rotation, Rotation):
                 self.rotation.save()
@@ -158,12 +161,12 @@ class ConditionTransformer(Transformer):
             self.condition_type = "OPEN"
             gain = None
             stimulus_type = self.stimulus_type
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation, fg_color=self.fg_color, bg_color=self.bg_color)
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, gain=gain, stimulus_type=stimulus_type, start_orientation=self.start_orientation, fg_color=self.fg_color, bg_color=self.bg_color, brightness = self.brightness, contrast = self.contrast)
         elif self.condition_type in ["OPEN"]:
             self.condition.save()
             self.condition_type="POST"
             stimulus_type = self.stimulus_type
-            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color)
+            self.condition = Condition.create(experiment=self.experiment, trial_number=self.trial_number, trial_type=self.trial_type, condition_number=self.condition_number, condition_type=self.condition_type, fps=self.fps, bar_size=self.panel_angle, interval_size=self.interval_angle, comment=self.comment, repetition=self.block_repetition, stimulus_type=stimulus_type, fg_color=self.fg_color, bg_color=self.bg_color, brightness = self.brightness, contrast = self.contrast)
 
     def _set_rotate(self, tsLog, tsClient, tsReq, key, value) -> None: # FIXME: should be in ROtaitonTransformer
         if isinstance(self.rotation, Rotation):
@@ -205,16 +208,23 @@ class ConditionTransformer(Transformer):
         if isinstance(self.condition, Condition):
             self.condition.interval_size = self.interval_angle
 
-
     def _bg_color(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.bg_color = int(value)
+        if self.brightness is not None:
+            self.contrast = round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
         if isinstance(self.condition, Condition):
             self.condition.bg_color = self.bg_color
-    
+            self.condition.contrast = self.contrast
+
     def _fg_color(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.fg_color = int(value)
+        self.brightness = self.fg_color >> 8
+        if self.bg_color is not None:
+            self.contrast = round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
         if isinstance(self.condition, Condition):
             self.condition.fg_color = self.fg_color
+            self.condition.brightness = self.brightness
+            self.condition.contrast = self.contrast
 
     def get_keys(self):
         return self.switcher.keys()

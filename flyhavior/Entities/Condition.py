@@ -27,3 +27,6 @@ class Condition(BaseModel):
 
     fg_color = IntegerField(null=True)
     bg_color = IntegerField(null=True)
+
+    contrast = FloatField(null=True)
+    brightness = FloatField(null=True)
