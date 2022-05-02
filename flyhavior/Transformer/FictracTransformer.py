@@ -82,18 +82,15 @@ class FictracTransformer():
         cur = db.execute_sql(sql)
         rows = cur.fetchall()
 
-        for rw in rows:
-            for i in range(rw[0], rw[1]+1):
-                sql = f'''
-                UPDATE Rotation
-                SET fictrac_id = (SELECT id 
-                    FROM fictrac
-                    WHERE frame_counter = {rw[2]} + ROUND({101/rw[3]} * ({i} - {rw[0]}))
-                    AND experiment_id={self.experiment.id})
-                WHERE id = {i}
-                AND condition_id in (SELECT id from condition where experiment_id={self.experiment.id})
-                '''
-                db.execute_sql(sql)
+        # FIXME this will break with more than one experiment at a time. 
+        sql = f'''
+            UPDATE rotation AS r
+            SET fictrac_id = fictrac.id
+            FROM rotation 
+                LEFT JOIN fictrac ON rotation.fictrac_seq=fictrac.frame_counter
+            WHERE r.id = rotation.id 
+        '''
+        db.execute_sql(sql)
 
         # Clean out fictrac
         sql = '''DELETE from 
@@ -110,7 +107,7 @@ class FictracTransformer():
                 f.number AS fly_number, f.sex, f.strain, f.birth_after, f.birth_before, f.day_start, f.day_end, 
                 b.number as ball_number,
                 e.temperature, e.air, e.glue, e.start,
-                c.repetition, c.stimulus_type, c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size, c.gain, c.start_orientation, c.comment, c.fg_color, c.bg_color,
+                c.repetition, c.stimulus_type, c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size, c.gain, c.start_orientation, c.comment, c.fg_color, c.bg_color, c.left_right,
                 c.contrast, c.brightness,
                 r.rendered, r.speed, r.angle, r.client_ts_ms,
                 -- at.turn,

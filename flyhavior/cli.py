@@ -1,6 +1,7 @@
 """Console script for flyhavior."""
 import argparse
 import sys
+import datetime
 
 from flyhavior import Flyhavior
 from PostProcessor import PostProcessor
@@ -16,6 +17,8 @@ def main():
     parser.add_argument("--post", help="Do post-processing like creating views and calculating aggregates.", action="store_true")
     args = parser.parse_args()
 
+    print(f"Started: {datetime.datetime.now()}")
+
     if args.flyflix and args.fictrac:
         f = Flyhavior(args.flyflix, args.fictrac, args.output)
         f.run()
@@ -26,6 +29,7 @@ def main():
         post.create_a_condition()
         post.alter_v_move()
         post.vacuum()
+    print(f"Ended: {datetime.datetime.now()}")
     return 0
 
 

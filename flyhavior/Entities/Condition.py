@@ -24,6 +24,7 @@ class Condition(BaseModel):
     gain = FloatField(null=True)
     stimulus_type = TextField(null=True)
     start_orientation = FloatField(null=True)
+    left_right = IntegerField(null=True)
 
     fg_color = IntegerField(null=True)
     bg_color = IntegerField(null=True)
