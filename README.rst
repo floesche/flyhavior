@@ -28,7 +28,7 @@ The current version of flyhavior merges data collected for the same experiment t
 Installation
 ------------
 
-Please download the software through GiHub, either by `cloning the repository <Flyhavior_>`_ or by choosing to download and unpacking a zip file through the Code button.
+Please download the software through GiHub, either by `cloning the repository <Flyhavior_>`_ or by choosing to `download and unpacking a zip file <Flyhavior zip_>` through the Code button.
 
 _`Output format`
 -------------
@@ -46,3 +46,4 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 .. _FlyFlix: https://github.com/floesche/FlyFlix
 .. _FicTrac: https://github.com/floesche/fictrac
 .. _Flyhavior: https://github.com/floesche/flyhavior
+.. _Flyhavior zip: https://github.com/floesche/flyhavior/archive/refs/heads/main.zip
