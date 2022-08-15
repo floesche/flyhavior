@@ -28,7 +28,7 @@ The current version of flyhavior merges data collected for the same experiment t
 Installation
 ------------
 
-Please download the software through GiHub, either by `cloning the repository <Flyhavior_>`_ or by choosing to `download and unpacking a zip file <Flyhavior zip_>` through the Code button.
+Please download the software through GiHub, either by `cloning the repository <Flyhavior_>`_ or by choosing to `download and unpacking a zip file <Flyhavior zip_>`_ through the Code button.
 
 _`Output format`
 -------------
