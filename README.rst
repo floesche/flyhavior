@@ -23,7 +23,7 @@ Flyhavior is the basis for analyzing fly behavior data.
 Features
 ========
 
-The current version of flyhavior merges data collected for the same experiment through the applications FlyFlix_ and FicTrac_. It takes the data collected by FlyFlix in a ``*.csv`` file and finds corresponding timestamps in the ``*.dat`` file of FicTrac. It then merges the two datasets into an experiment data format (see `Output format`_).
+The current version of `Flyhavior`_ merges data collected for the same experiment through the applications FlyFlix_ and FicTrac_. It takes the data collected by FlyFlix in a ``*.csv`` file and finds corresponding timestamps in the ``*.dat`` file of FicTrac. It then merges the two datasets into an experiment data format (see `Output format`_).
 
 Installation
 ------------
