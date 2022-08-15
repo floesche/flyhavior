@@ -30,6 +30,8 @@ Installation
 
 Please download the software through GiHub, either by `cloning the repository <Flyhavior_>`_ or by choosing to `download and unpacking a zip file <Flyhavior zip_>`_ through the Code button.
 
+Once you have downloaded the code it is highly recommended to `create a python virtual environment <venv_>`_ for this code.
+
 _`Output format`
 -------------
 
@@ -47,3 +49,4 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 .. _FicTrac: https://github.com/floesche/fictrac
 .. _Flyhavior: https://github.com/floesche/flyhavior
 .. _Flyhavior zip: https://github.com/floesche/flyhavior/archive/refs/heads/main.zip
+.. _venv: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment
