@@ -1,0 +1,3 @@
+load-data:
+	python flyhavior/cli.py --post --flyflix data/raw/flyflix-example-data.csv --fictrac data/raw/fictrac-example-data.dat
+	mv -f data/test.db data/cshl001.db

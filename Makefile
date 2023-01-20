@@ -84,5 +84,16 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
+update-dependencies:
+	@pip install --upgrade pip
+	@cat requirements.txt | cut -d"=" -f1 | xargs pip install -U
+
+show-dependencies:
+	@pip freeze | cut -d "=" -f1 | xargs pip show | grep -i "^name\|^version\|^requires"
+
+install-dependencies:
+	@pip install --upgrade pip
+	@pip install -r requirements.txt
+
 ## Contains all the actual filenames FIXME: There must be a better way…
 include .load-data.mk
