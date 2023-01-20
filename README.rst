@@ -30,11 +30,12 @@ Flyhavior currently merges [FlyFlix](https://github.com/floesche/FlyFlix) and [F
 
 You can run flyhavior with the following command:
 
-```bash
-python flyhavior/cli.py --flyflix <PATH_TO_FLYFLIX_CSV> --fictrac <PATH_TO_FICTRAC_DAT>
-```
+.. code:: bash
 
-If you add the command line switch `--post`, flyhavior creates a useful view `v_move` across all the tables and the helper table `a_condition`.
+  python flyhavior/cli.py --flyflix <PATH_TO_FLYFLIX_CSV> --fictrac <PATH_TO_FICTRAC_DAT>
+
+
+If you add the command line switch ``--post``, flyhavior creates a useful view ``v_move`` across all the tables and the helper table ``a_condition``.
 
 
 SQLite tables
@@ -63,16 +64,16 @@ Install
 
 1. clone this repository and change to this branch
 2. create a new virtual environment for python and change to that environment
-3. install dependencies via `make install-dependencies`
-4. copy the file `load-data.mk.example` to `.load-data.mk`
+3. install dependencies via ``make install-dependencies``
+4. copy the file ``load-data.mk.example`` to ``.load-data.mk``
 
 
 Example run
 -----------
 
-1. after installing run `make load-data`
+1. after installing run ``make load-data``
 
-This creates an SQLite3 file `data/cshl001.db` with all the experimental data.
+This creates an SQLite3 file ``data/cshl001.db`` with all the experimental data.
 
 
 Credits
