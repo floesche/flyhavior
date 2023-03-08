@@ -96,4 +96,4 @@ install-dependencies:
 	@pip install -r requirements.txt
 
 ## Contains all the actual filenames FIXME: There must be a better way…
-include .load-data.mk
+include .load-data1.mk

@@ -222,7 +222,7 @@ class ConditionTransformer(Transformer):
     def _bg_color(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.bg_color = int(value)
         if self.brightness is not None:
-            self.contrast = round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
+            self.contrast = 1 #round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
         if isinstance(self.condition, Condition):
             self.condition.bg_color = self.bg_color
             self.condition.contrast = self.contrast
@@ -231,7 +231,7 @@ class ConditionTransformer(Transformer):
         self.fg_color = int(value)
         self.brightness = self.fg_color >> 8
         if self.bg_color is not None:
-            self.contrast = round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
+            self.contrast = 1 #round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
         if isinstance(self.condition, Condition):
             self.condition.fg_color = self.fg_color
             self.condition.brightness = self.brightness

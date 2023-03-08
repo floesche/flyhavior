@@ -1,3 +1,6 @@
 load-data:
-	python flyhavior/cli.py --post --flyflix data/raw/flyflix-example-data.csv --fictrac data/raw/fictrac-example-data.dat
-	mv -f data/test.db data/cshl001.db
+	#python flyhavior/cli.py --post --flyflix data/raw/flyflix-example-data.csv --fictrac data/raw/fictrac-example-data.dat
+	#mv -f data/test.db data/cshl001.db
+	
+	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230123_165144.csv --fictrac /home/labadmin/it2/2023-01-23/fictrac-20230123_160748.dat
+	mv -f data/test.db data/opt001.db
