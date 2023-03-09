@@ -410,26 +410,29 @@ load-data:
 	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230306_185451.csv --fictrac /home/labadmin/it2/2023-03-06/fictrac-20230306_144412.dat
 	#mv -f data/test.db data/opt293.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_170138.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt294.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_170138.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt294.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_172118.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt295.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_172118.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt295.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_173742.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt296.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_173742.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt296.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_175721.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt297.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_175721.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt297.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_181411.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt298.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_181411.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt298.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_183218.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt299.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_183218.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt299.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_185035.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt300.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_185035.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt300.db
 	
-	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_190826.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
-	mv -f data/test.db data/opt301.db
+	#python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230307_190826.csv --fictrac /home/labadmin/it2/2023-03-07/fictrac-20230307_165221.dat
+	#mv -f data/test.db data/opt301.db
+	
+	python flyhavior/cli.py --post --flyflix /home/labadmin/Documents/GitHub/FlyFlix/data/repeater_20230308_152755.csv --fictrac /home/labadmin/it2/2023-03-08/fictrac-20230308_152434.dat
+	mv -f data/test.db data/trial301.db

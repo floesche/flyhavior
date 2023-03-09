@@ -31,3 +31,6 @@ class Condition(BaseModel):
 
     contrast = FloatField(null=True)
     brightness = FloatField(null=True)
+    
+    start_mask = FloatField(null=True)
+    end_mask = FloatField(null = True)
