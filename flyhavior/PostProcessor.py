@@ -33,7 +33,7 @@ class PostProcessor:
                 c.repetition, c.stimulus_type, c.trial_number, c.trial_type, c.condition_number, c.condition_type, c.fps, c.bar_size, c.interval_size, c.gain, c.start_orientation, c.comment, c.fg_color, c.bg_color, c.left_right,
                 c.contrast, c.brightness,
                 ac.bar_deg, ac.interval_deg, ac.trial_speed, ac.trial_speed_deg, ac.direction,
-                r.rendered, r.speed, r.angle, r.client_ts_ms, ac.start_mask, ac.end_mask,
+                r.rendered, r.speed, r.angle, r.client_ts_ms, c.start_mask, c.end_mask,
                 -- at.turn,
                 t.*
             FROM fly f 
