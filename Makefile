@@ -95,5 +95,8 @@ install-dependencies:
 	@pip install --upgrade pip
 	@pip install -r requirements.txt
 
+clean-current:
+	rm data/test.db
+
 ## Contains all the actual filenames FIXME: There must be a better way…
 include .load-data.mk

@@ -222,16 +222,31 @@ class ConditionTransformer(Transformer):
     def _bg_color(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.bg_color = int(value)
         if self.brightness is not None:
-            self.contrast = round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
+            if self.bg_color & 0xFF0000 > 0:
+                self.contrast = round((self.brightness - (self.bg_color >> 16)) / (self.brightness + (self.bg_color >> 16)), 1)
+            elif self.bg_color & 0x00FF00 > 0:
+                self.contrast = round((self.brightness - (self.bg_color >> 16)) / (self.brightness + (self.bg_color >> 16)), 1)
+            elif self.bg_color > 0:
+                self.contrast = round((self.brightness - (self.bg_color)) / (self.brightness + (self.bg_color)), 1)
         if isinstance(self.condition, Condition):
             self.condition.bg_color = self.bg_color
             self.condition.contrast = self.contrast
 
     def _fg_color(self, tsLog, tsClient, tsReq, key, value) -> None:
         self.fg_color = int(value)
-        self.brightness = self.fg_color >> 8
-        if self.bg_color is not None:
-            self.contrast = round((self.brightness - (self.bg_color >> 8)) / (self.brightness + (self.bg_color >> 8)), 1)
+        if self.fg_color & 0xFF0000 > 0:
+            self.brightness = self.fg_color >> 16
+        elif self.fg_color & 0x00FF00 > 0:
+            self.brightness = self.fg_color >> 8
+        elif self.fg_color & 0x0000FF > 0:
+            self.brightness = self.fg_color
+        if self.bg_color is not None and self.brightness is not None:
+            if self.bg_color & 0xFF0000 > 0:
+                self.contrast = round((self.brightness - (self.bg_color >> 16)) / (self.brightness + (self.bg_color >> 16)), 1)
+            elif self.bg_color & 0x00FF00 > 0:
+                self.contrast = round((self.brightness - (self.bg_color >> 16)) / (self.brightness + (self.bg_color >> 16)), 1)
+            elif self.bg_color > 0:
+                self.contrast = round((self.brightness - (self.bg_color)) / (self.brightness + (self.bg_color)), 1)
         if isinstance(self.condition, Condition):
             self.condition.fg_color = self.fg_color
             self.condition.brightness = self.brightness
